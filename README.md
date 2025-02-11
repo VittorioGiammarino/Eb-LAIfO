@@ -18,47 +18,56 @@ bash Miniconda3-latest-Linux-x86_64.sh
 
 ```shell
 conda env create -f environment.yml
-conda activate VRL3
+conda activate AIL_w_DA
 ```
 
-### Expert policies
-
-Download the policies [here](https://figshare.com/s/c441615a51a79a22c3e4) and unzip in main directory.
-
-### Train RL+imitation from expert videos with visual mismatch
-
-#### Door-Color
+### Train expert
 
 ```shell
-python train_RL_with_expert.py seed=0 task_agent=door_color task_expert=door pretrained_encoder=false save_video=true RL_plus_IL=true GAN_loss=bce apply_aug='CL-Q' aug_type='color' CL_data_type=agent save_models=true
+python train_expert.py task=walker_walk seed=0 agent=ddpg frame_skip=1
+```
+Create a new directory `expert_policies`, move the trained expert policy in `expert_policies`.
+
+Alternatively, download the policies [here](https://figshare.com/s/22de566de2229068fb75) and unzip in main directory.
+
+### Train imitation from expert videos with visual mismatch for the DMC suite
+
+#### Light
+
+**C-LAIfO**
+
+```shell
+python train_LAIL_MI.py task_agent=walker_walk task_expert=walker_walk agent=lail_cl_multiset difficulty=easy delta_source=0.2 delta_target=-0.25 apply_aug='CL-Q' aug_type='brightness' CL_data_type=agent
 ```
 
-#### Door-Light
+#### Body
+
+**C-LAIfO**
 
 ```shell
-python train_RL_with_expert.py seed=0 task_agent=door_light task_expert=door pretrained_encoder=false save_video=true RL_plus_IL=true GAN_loss=bce apply_aug='CL-Q' aug_type='brightness' CL_data_type=agent save_models=true
+python train_LAIL_MI.py task_agent=walker_walk task_expert=walker_walk agent=lail_cl_multiset difficulty=color_body apply_aug='CL-Q' aug_type='color' CL_data_type=agent
 ```
 
-#### Hammer-Color
+#### Floor
+
+**C-LAIfO**
 
 ```shell
-python train_RL_with_expert.py seed=0 task_agent=hammer_color task_expert=hammer pretrained_encoder=false save_video=true RL_plus_IL=true GAN_loss=bce apply_aug='CL-Q' aug_type='color' CL_data_type=agent save_models=true 
+python train_LAIL_MI.py task_agent=walker_walk task_expert=walker_walk agent=lail_cl_multiset difficulty=color_floor apply_aug='CL-Q' aug_type='color' CL_data_type=agent
 ```
 
-#### Hammer-Light
+#### Background
+
+**C-LAIfO**
 
 ```shell
-python train_RL_with_expert.py seed=0 task_agent=hammer_light task_expert=hammer pretrained_encoder=false save_video=true RL_plus_IL=true GAN_loss=bce apply_aug='CL-Q' aug_type='brightness' CL_data_type=agent save_models=true
+python train_LAIL_MI.py task_agent=walker_walk task_expert=walker_walk agent=lail_cl_multiset difficulty=color_bg apply_aug='CL-Q' aug_type='color' CL_data_type=agent
 ```
 
-#### Pen-Color
+#### Full
+
+**C-LAIfO**
 
 ```shell
-python train_RL_with_expert.py seed=0 task_agent=pen_color task_expert=pen pretrained_encoder=false save_video=true RL_plus_IL=true GAN_loss=bce apply_aug='CL-Q' aug_type='color' CL_data_type=agent save_models=true 
-```
-
-#### Pen-Light
-
-```shell
-python train_RL_with_expert.py seed=0 task_agent=pen_light task_expert=pen pretrained_encoder=false save_video=true RL_plus_IL=true GAN_loss=bce apply_aug='CL-Q' aug_type='brightness' CL_data_type=agent save_models=true
+python train_LAIL_MI.py task_agent=walker_walk task_expert=walker_walk agent=lail_cl_multiset difficulty=color_all_together apply_aug='CL-Q' aug_type='color' CL_data_type=agent
 ```
