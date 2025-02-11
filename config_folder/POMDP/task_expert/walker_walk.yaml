@@ -1,0 +1,7 @@
+defaults:
+  - easy
+  - _self_
+
+task_name_expert: walker_walk
+nstep: 1
+batch_size: 512

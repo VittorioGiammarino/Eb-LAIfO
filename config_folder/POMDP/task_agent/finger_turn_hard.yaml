@@ -1,0 +1,5 @@
+defaults:
+  - medium
+  - _self_
+
+task_name_agent: finger_turn_hard

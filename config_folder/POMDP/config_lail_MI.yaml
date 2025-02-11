@@ -1,0 +1,96 @@
+defaults:
+  - _self_
+  - replay_buffer@_global_: numpy
+  - replay_buffer_expert@_global_: numpy
+  - task_agent@_global_: walker_walk
+  - task_expert@_global_: walker_walk
+  - agent@_global_: lail_cl_multiset
+  - expert@_global_: ddpg
+  - difficulty@_global_: no_mismatch
+  - override hydra/launcher: submitit_local
+
+# task settings
+frame_stack: 3
+action_repeat: 1
+discount: 0.99
+image_height: 64
+image_width: 64
+# train settings
+num_seed_frames: 4000
+num_expl_frames: 10000
+# eval
+eval_every_frames: 10000
+num_eval_episodes: 10
+# snapshot
+save_snapshot: false
+save_replay_buffers: false
+# replay buffer
+replay_buffer_size: 1000000
+replay_buffer_num_workers: 4
+nstep: 3
+batch_size: 256
+# misc
+seed: 1
+device: cuda
+save_video: false
+save_train_video: false
+use_tb: false
+
+# experiment
+experiment: exp
+# agent
+lr: 1e-4
+lr_BYOL: 1e-4
+feature_dim: 50
+stochastic_encoder: false
+stochastic_preprocessor: true
+# expert data
+num_expert_episodes: 100
+frame_skip: 1
+expert_replay_buffer_size: 100000
+#discriminator feat
+discriminator_lr: 1e-4
+spectral_norm_bool: false
+GAN_loss: bce
+from_dem: false
+
+# other
+check_every_steps: 5000
+depth_flag: false # Enables learning from perfect depth
+segm_flag: false # Enables learning from perfect segmentation
+apply_aug: 'everywhere' # adds additional augmentations to BYOL and CL agents
+add_aug_anchor_and_positive: false # adds augmentations to both anchors and positives
+aug_type: 'full' # augmentation type [full, color, brightness]
+deeper_head: false # in the projected setting it makes the encoder head deeper
+grayscale: false
+
+# data aug policy
+num_sub_policies: 5
+temperature: 0.05
+operation_count: 6
+operations_subset: 'color'
+aug_policy_lr: 1e-4
+check_every_steps_aug_policy: 10
+
+# multi-dataset
+train_encoder_w_critic: true
+CL_data_type: all # agent, expert, all, random-only
+
+# multi envs
+num_aug_envs: 10
+aug: true
+
+hydra:
+  run:
+    dir: ./experiments/exp_${task_name_agent}_${task_name_expert}_difficulty=${difficulty_name}_delta_source=${delta_source}_delta_target=${delta_target}/${agent_name}_apply_aug=${apply_aug}_aug_type=${aug_type}_CL_data_type=${CL_data_type}_${now:%Y.%m.%d}/${now:%H%M}_${hydra.job.override_dirname}
+  sweep:
+    dir: ./experiments/exp_${task_name_agent}_${task_name_expert}_multirun_difficulty=${difficulty_name}_delta_source=${delta_source}_delta_target=${delta_target}/${agent_name}_apply_aug=${apply_aug}_aug_type=${aug_type}_CL_data_type=${CL_data_type}/
+    subdir: ${now:%Y.%m.%d}_${now:%H%M}_${hydra.job.override_dirname}
+  launcher:
+    timeout_min: 18000000
+    cpus_per_task: 10
+    gpus_per_node: 1
+    tasks_per_node: 1
+    mem_gb: 160
+    nodes: 1
+    submitit_folder: ./experiments/exp_${task_name_agent}_${task_name_expert}_multirun_difficulty=${difficulty_name}_delta_source=${delta_source}_delta_target=${delta_target}/${agent_name}_apply_aug=${apply_aug}_aug_type=${aug_type}_CL_data_type=${CL_data_type}/

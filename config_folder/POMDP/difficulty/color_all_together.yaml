@@ -1,0 +1,9 @@
+defaults:
+  - _self_
+
+difficulty_name: color_all_together
+visual_seed_target: 0
+delta_target: 0.2
+visual_seed_source: -9577
+delta_source: 0.2
+vary: ["bg", "floor", "body"] #, "bg", "floor"]  #["bg", "floor", "body", "target", "reflectance", "camera", "light"]

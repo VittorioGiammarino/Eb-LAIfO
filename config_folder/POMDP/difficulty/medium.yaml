@@ -1,0 +1,9 @@
+defaults:
+  - _self_
+
+difficulty_name: medium
+visual_seed_target: 9123
+delta_target: 0.2
+visual_seed_source: 9577
+delta_source: 0.15
+vary: ["light", "floor"] #["target", "reflectance", "camera", "light", "floor"] #["bg", "floor", "body", "target", "reflectance", "camera", "light"]

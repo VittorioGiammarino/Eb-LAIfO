@@ -1,0 +1,7 @@
+defaults:
+  - _self_
+
+difficulty_name: no_mismatch
+visual_seed_target: 0
+visual_seed_source: 0
+vary: ["target", "reflectance", "camera", "light", "bg", "floor"]  #["bg", "floor", "body", "target", "reflectance", "camera", "light"]
