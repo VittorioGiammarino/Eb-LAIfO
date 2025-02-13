@@ -58,33 +58,21 @@ from_dem: false
 check_every_steps: 5000
 depth_flag: false # Enables learning from perfect depth
 segm_flag: false # Enables learning from perfect segmentation
-apply_aug: 'everywhere' # adds additional augmentations to BYOL and CL agents
+apply_aug: 'CL-Q' # adds additional augmentations to BYOL and CL agents
 add_aug_anchor_and_positive: false # adds augmentations to both anchors and positives
 aug_type: 'full' # augmentation type [full, color, brightness]
 deeper_head: false # in the projected setting it makes the encoder head deeper
 grayscale: false
 
-# data aug policy
-num_sub_policies: 5
-temperature: 0.05
-operation_count: 6
-operations_subset: 'color'
-aug_policy_lr: 1e-4
-check_every_steps_aug_policy: 10
-
 # multi-dataset
 train_encoder_w_critic: true
-CL_data_type: all # agent, expert, all, random-only
-
-# multi envs
-num_aug_envs: 10
-aug: true
+CL_data_type: agent # agent, expert
 
 hydra:
   run:
-    dir: ./experiments/exp_${task_name_agent}_${task_name_expert}_difficulty=${difficulty_name}_delta_source=${delta_source}_delta_target=${delta_target}/${agent_name}_apply_aug=${apply_aug}_aug_type=${aug_type}_CL_data_type=${CL_data_type}_${now:%Y.%m.%d}/${now:%H%M}_${hydra.job.override_dirname}
+    dir: ./experiments/exp_${task_name_agent}_${task_name_expert}_difficulty=${difficulty_name}_delta_source=${delta_source}_delta_target=${delta_target}/${agent_name}_${now:%Y.%m.%d}/${now:%H%M}_${hydra.job.override_dirname}
   sweep:
-    dir: ./experiments/exp_${task_name_agent}_${task_name_expert}_multirun_difficulty=${difficulty_name}_delta_source=${delta_source}_delta_target=${delta_target}/${agent_name}_apply_aug=${apply_aug}_aug_type=${aug_type}_CL_data_type=${CL_data_type}/
+    dir: ./experiments/exp_${task_name_agent}_${task_name_expert}_multirun_difficulty=${difficulty_name}_delta_source=${delta_source}_delta_target=${delta_target}/${agent_name}/
     subdir: ${now:%Y.%m.%d}_${now:%H%M}_${hydra.job.override_dirname}
   launcher:
     timeout_min: 18000000
@@ -93,4 +81,4 @@ hydra:
     tasks_per_node: 1
     mem_gb: 160
     nodes: 1
-    submitit_folder: ./experiments/exp_${task_name_agent}_${task_name_expert}_multirun_difficulty=${difficulty_name}_delta_source=${delta_source}_delta_target=${delta_target}/${agent_name}_apply_aug=${apply_aug}_aug_type=${aug_type}_CL_data_type=${CL_data_type}/
+    submitit_folder: ./experiments/exp_${task_name_agent}_${task_name_expert}_multirun_difficulty=${difficulty_name}_delta_source=${delta_source}_delta_target=${delta_target}/${agent_name}/

@@ -37,7 +37,13 @@ Alternatively, download the policies [here](https://figshare.com/s/22de566de2229
 **C-LAIfO**
 
 ```shell
-python train_LAIL_MI.py task_agent=walker_walk task_expert=walker_walk agent=lail_cl_multiset difficulty=easy delta_source=0.2 delta_target=-0.25 apply_aug='CL-Q' aug_type='brightness' CL_data_type=agent
+python train_LAIL_MI.py task_agent=walker_walk task_expert=walker_walk agent=lail_cl_multiset difficulty=easy delta_source=0.2 delta_target=-0.25 aug_type='brightness'
+```
+
+**Eb-LAIfO**
+
+```shell
+python train_LAIL_MI.py task_agent=walker_walk task_expert=walker_walk agent=lail_eb_multiset difficulty=easy delta_source=0.2 delta_target=-0.25 frame_stack=4
 ```
 
 #### Body
@@ -45,7 +51,13 @@ python train_LAIL_MI.py task_agent=walker_walk task_expert=walker_walk agent=lai
 **C-LAIfO**
 
 ```shell
-python train_LAIL_MI.py task_agent=walker_walk task_expert=walker_walk agent=lail_cl_multiset difficulty=color_body apply_aug='CL-Q' aug_type='color' CL_data_type=agent
+python train_LAIL_MI.py task_agent=walker_walk task_expert=walker_walk agent=lail_cl_multiset difficulty=color_body aug_type='color'
+```
+
+**Eb-LAIfO**
+
+```shell
+python train_LAIL_MI.py task_agent=walker_walk task_expert=walker_walk agent=lail_eb_multiset difficulty=color_body frame_stack=4
 ```
 
 #### Floor
@@ -53,7 +65,13 @@ python train_LAIL_MI.py task_agent=walker_walk task_expert=walker_walk agent=lai
 **C-LAIfO**
 
 ```shell
-python train_LAIL_MI.py task_agent=walker_walk task_expert=walker_walk agent=lail_cl_multiset difficulty=color_floor apply_aug='CL-Q' aug_type='color' CL_data_type=agent
+python train_LAIL_MI.py task_agent=walker_walk task_expert=walker_walk agent=lail_cl_multiset difficulty=color_floor aug_type='color'
+```
+
+**Eb-LAIfO**
+
+```shell
+python train_LAIL_MI.py task_agent=walker_walk task_expert=walker_walk agent=lail_eb_multiset difficulty=color_body frame_stack=4
 ```
 
 #### Background
@@ -61,7 +79,13 @@ python train_LAIL_MI.py task_agent=walker_walk task_expert=walker_walk agent=lai
 **C-LAIfO**
 
 ```shell
-python train_LAIL_MI.py task_agent=walker_walk task_expert=walker_walk agent=lail_cl_multiset difficulty=color_bg apply_aug='CL-Q' aug_type='color' CL_data_type=agent
+python train_LAIL_MI.py task_agent=walker_walk task_expert=walker_walk agent=lail_cl_multiset difficulty=color_bg aug_type='color'
+```
+
+**Eb-LAIfO**
+
+```shell
+python train_LAIL_MI.py task_agent=walker_walk task_expert=walker_walk agent=lail_eb_multiset difficulty=color_body frame_stack=4
 ```
 
 #### Full
@@ -69,5 +93,11 @@ python train_LAIL_MI.py task_agent=walker_walk task_expert=walker_walk agent=lai
 **C-LAIfO**
 
 ```shell
-python train_LAIL_MI.py task_agent=walker_walk task_expert=walker_walk agent=lail_cl_multiset difficulty=color_all_together apply_aug='CL-Q' aug_type='color' CL_data_type=agent
+python train_LAIL_MI.py task_agent=walker_walk task_expert=walker_walk agent=lail_cl_multiset difficulty=color_all_together aug_type='color'
+```
+
+**Eb-LAIfO**
+
+```shell
+python train_LAIL_MI.py task_agent=walker_walk task_expert=walker_walk agent=lail_eb_multiset difficulty=color_body frame_stack=4
 ```

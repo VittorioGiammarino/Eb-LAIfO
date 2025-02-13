@@ -89,7 +89,6 @@ class Workspace:
                       specs.Array((1,), np.float32, 'discount'))
 
         self.replay_buffer = hydra.utils.instantiate(self.cfg.replay_buffer, data_specs=data_specs)
-        self.replay_buffer_random = hydra.utils.instantiate(self.cfg.replay_buffer_expert)
 
         #create source envs and agent
         self.expert_env = make_env_expert(self.cfg)
@@ -100,7 +99,6 @@ class Workspace:
         
         self.expert = hydra.utils.instantiate(self.cfg.expert)
         self.replay_buffer_expert = hydra.utils.instantiate(self.cfg.replay_buffer_expert)
-        self.replay_buffer_random_expert = hydra.utils.instantiate(self.cfg.replay_buffer_expert)
 
         self.video_recorder = VideoRecorder(self.work_dir if self.cfg.save_video else None)
         self.train_video_recorder = TrainVideoRecorder(self.work_dir if self.cfg.save_train_video else None)
@@ -147,38 +145,6 @@ class Workspace:
             self.video_recorder.save('expert.mp4')
 
         print(f'Average expert reward: {total_reward / episode}, Total number of samples: {step}')
-
-    def store_random_expert_transitions(self):
-        step, episode, total_reward = 0, 0, 0
-        eval_until_episode = utils.Until(self.cfg.num_expert_episodes)
-        self.expert.num_expl_steps = 1.0
-        
-        while eval_until_episode(episode):
-            obs, time_step = self.expert_env.reset()
-            self.expert.reset()
-            self.video_recorder.init(self.expert_env, enabled=(episode == 0))
-            
-            extended_time_step = self.expert_env.step_learn_from_pixels(time_step)
-            self.replay_buffer_random_expert.add(extended_time_step)
-            
-            done = False
-            
-            while not done:
-                with torch.no_grad(), utils.eval_mode(self.expert):
-                    action = self.expert.act(obs, self.global_step, eval_mode=False)
-                obs, reward, done, _, time_step = self.expert_env.step(action)    
-                
-                extended_time_step = self.expert_env.step_learn_from_pixels(time_step, action)
-                self.replay_buffer_random_expert.add(extended_time_step)
-                self.video_recorder.record(self.expert_env)
-                
-                total_reward += extended_time_step.reward
-                step += 1
-
-            episode += 1
-            self.video_recorder.save('random_expert.mp4')
-
-        print(f'Average random expert reward: {total_reward / episode}, Total number of samples: {step}')
         
     def eval(self):
         step, episode, total_reward = 0, 0, 0
@@ -215,9 +181,6 @@ class Workspace:
         seed_until_step = utils.Until(self.cfg.num_seed_frames,
                                       self.cfg.action_repeat)
         
-        random_until_step = utils.Until(self.cfg.num_expl_frames,
-                                        self.cfg.action_repeat)
-        
         eval_every_step = utils.Every(self.cfg.eval_every_frames,
                                       self.cfg.action_repeat)
 
@@ -225,7 +188,6 @@ class Workspace:
         time_step = self.train_env.reset()
 
         self.replay_buffer.add(time_step)
-        self.replay_buffer_random.add(time_step)
 
         self.train_video_recorder.init(time_step.observation)
         metrics = None
@@ -252,9 +214,6 @@ class Workspace:
                 time_step = self.train_env.reset()
                 self.replay_buffer.add(time_step)
 
-                if random_until_step(self.global_step):
-                    self.replay_buffer_random.add(time_step)
-
                 self.train_video_recorder.init(time_step.observation)
                 episode_step = 0
                 episode_reward = 0
@@ -269,7 +228,6 @@ class Workspace:
                     self.save_snapshot()
 
                 if self.cfg.save_replay_buffers:
-                    self.save_buffer_random()
                     self.save_buffer()
 
             # sample action
@@ -282,8 +240,6 @@ class Workspace:
             if not seed_until_step(self.global_step):
                 metrics = self.agent.update(self.replay_buffer, 
                                             self.replay_buffer_expert, 
-                                            self.replay_buffer_random, 
-                                            self.replay_buffer_random_expert, 
                                             self.global_step)
                 
                 self.logger.log_metrics(metrics, self.global_frame, ty='train')
@@ -292,9 +248,6 @@ class Workspace:
             time_step = self.train_env.step(action)
             episode_reward += time_step.reward
             self.replay_buffer.add(time_step)
-
-            if random_until_step(self.global_step):
-                self.replay_buffer_random.add(time_step)
 
             self.train_video_recorder.record(time_step.observation)
             episode_step += 1
@@ -314,23 +267,9 @@ class Workspace:
         with snapshot.open('wb') as f:
             torch.save(payload, f, pickle_protocol=4)
 
-    def save_buffer_random(self):
-        snapshot = self.work_dir / f'replay_buffer_random_{self.cfg.task_name_agent}.pt'
-        keys_to_save = ['replay_buffer_random']
-        payload = {k: self.__dict__[k] for k in keys_to_save}
-        with snapshot.open('wb') as f:
-            torch.save(payload, f, pickle_protocol=4)
-
     def save_expert_buffer(self):
         snapshot = self.work_dir / f'replay_buffer_expert_{self.cfg.task_name_expert}.pt'
         keys_to_save = ['replay_buffer_expert']
-        payload = {k: self.__dict__[k] for k in keys_to_save}
-        with snapshot.open('wb') as f:
-            torch.save(payload, f, pickle_protocol=4)
-
-    def save_expert_buffer_random(self):
-        snapshot = self.work_dir / f'replay_buffer_expert_random_{self.cfg.task_name_expert}.pt'
-        keys_to_save = ['replay_buffer_random_expert']
         payload = {k: self.__dict__[k] for k in keys_to_save}
         with snapshot.open('wb') as f:
             torch.save(payload, f, pickle_protocol=4)
@@ -358,11 +297,9 @@ def main(cfg):
     print(f'loading expert target: {snapshot}')
     workspace.load_expert(snapshot)
     workspace.store_expert_transitions()
-    workspace.store_random_expert_transitions()
 
     if cfg.save_replay_buffers:
         workspace.save_expert_buffer()
-        workspace.save_expert_buffer_random()
 
     workspace.train()
 
