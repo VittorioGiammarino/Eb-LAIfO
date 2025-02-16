@@ -26,6 +26,10 @@ conda activate AIL_w_DA
 ```shell
 python train_expert.py task=walker_walk seed=0 agent=ddpg frame_skip=1
 ```
+For multi seed 
+```shell
+python train_LAIL_MI.py task_agent=walker_walk task_expert=walker_walk agent=lail_eb_multiset difficulty=color_floor frame_stack=4 seed=0,1,2,3,4 --multirun
+```
 Create a new directory `expert_policies`, move the trained expert policy in `expert_policies`.
 
 Alternatively, download the policies [here](https://figshare.com/s/22de566de2229068fb75) and unzip in main directory.
@@ -71,7 +75,7 @@ python train_LAIL_MI.py task_agent=walker_walk task_expert=walker_walk agent=lai
 **Eb-LAIfO**
 
 ```shell
-python train_LAIL_MI.py task_agent=walker_walk task_expert=walker_walk agent=lail_eb_multiset difficulty=color_body frame_stack=4
+python train_LAIL_MI.py task_agent=walker_walk task_expert=walker_walk agent=lail_eb_multiset difficulty=color_floor frame_stack=4
 ```
 
 #### Background
@@ -85,7 +89,7 @@ python train_LAIL_MI.py task_agent=walker_walk task_expert=walker_walk agent=lai
 **Eb-LAIfO**
 
 ```shell
-python train_LAIL_MI.py task_agent=walker_walk task_expert=walker_walk agent=lail_eb_multiset difficulty=color_body frame_stack=4
+python train_LAIL_MI.py task_agent=walker_walk task_expert=walker_walk agent=lail_eb_multiset difficulty=color_bg frame_stack=4
 ```
 
 #### Full
@@ -99,5 +103,5 @@ python train_LAIL_MI.py task_agent=walker_walk task_expert=walker_walk agent=lai
 **Eb-LAIfO**
 
 ```shell
-python train_LAIL_MI.py task_agent=walker_walk task_expert=walker_walk agent=lail_eb_multiset difficulty=color_body frame_stack=4
+python train_LAIL_MI.py task_agent=walker_walk task_expert=walker_walk agent=lail_eb_multiset difficulty=color_all_together frame_stack=4
 ```
