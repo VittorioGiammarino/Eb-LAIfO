@@ -24,6 +24,7 @@ agent:
   stochastic_encoder: ${stochastic_encoder}
   train_encoder_w_critic: ${train_encoder_w_critic}
   from_dem: ${from_dem}
+  noise_sigma: ${noise_sigma}
   depth_flag: ${depth_flag}
   segm_flag: ${segm_flag}
 

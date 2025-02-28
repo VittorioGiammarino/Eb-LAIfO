@@ -268,6 +268,7 @@ class LailEbAgent:
                  stochastic_encoder=False, 
                  train_encoder_w_critic = True,
                  from_dem=False, 
+                 noise_sigma=0.005,
                  depth_flag=False, 
                  segm_flag=False):
         
@@ -282,7 +283,7 @@ class LailEbAgent:
         self.from_dem = from_dem
         self.check_every_steps = check_every_steps
         self.train_encoder_w_critic = train_encoder_w_critic
-        self.eb_transform = EventBasedTransform()
+        self.eb_transform = EventBasedTransform(noise_sigma=noise_sigma)
         self.aug_Q = RandomShiftsAug(pad=4)
         self.aug_D = RandomShiftsAug(pad=4)
 

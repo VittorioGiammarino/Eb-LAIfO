@@ -53,6 +53,7 @@ discriminator_lr: 1e-4
 spectral_norm_bool: false
 GAN_loss: bce
 from_dem: false
+noise_sigma: 0.005
 
 # other
 check_every_steps: 5000
